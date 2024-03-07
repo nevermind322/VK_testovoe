@@ -1,0 +1,7 @@
+[versions]
+ver = "1.0.0"
+[libraries]
+
+[plugins]
+application = {id = "VK_testovoe.android.application", version.ref  = "ver"}
+
