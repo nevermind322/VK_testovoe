@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 
 data class LoadKeys(val skip: Int, val limit: Int) {
     fun getNext(): LoadKeys = LoadKeys(skip + limit, limit)
-    fun getPrev(): LoadKeys = LoadKeys(skip - limit, limit)
+    fun getPrev(): LoadKeys? = if (skip == 0) null else LoadKeys(skip - limit, limit)
 }
 
 class ProductsNetworkPagingSource(dummyJsonApiService: DummyJsonApiService = apiService) :
@@ -26,7 +26,7 @@ class ProductsNetworkPagingSource(dummyJsonApiService: DummyJsonApiService = api
 
     override suspend fun load(params: LoadParams<LoadKeys>): LoadResult<LoadKeys, Product> =
         withContext(Dispatchers.IO) {
-            val key = params.key ?: LoadKeys(0, params.loadSize)
+            val key = params.key ?: LoadKeys(0, 20)
             try {
                 val data = apiService.getProducts(key.limit, key.skip).products
                 LoadResult.Page(
