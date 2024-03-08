@@ -3,5 +3,7 @@ ver = "1.0.0"
 [libraries]
 
 [plugins]
-application = {id = "VK_testovoe.android.application", version.ref  = "ver"}
+application = { id = "VK_testovoe.android.application", version.ref = "ver" }
+library = { id = "VK_testovoe.android.library", version.ref = "ver" }
+compose = { id = "VK_testovoe.android.compose", version.ref = "ver" }
 

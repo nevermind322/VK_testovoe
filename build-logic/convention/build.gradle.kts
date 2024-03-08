@@ -32,11 +32,13 @@ gradlePlugin {
             id = "VK_testovoe.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
-        /*
-        register("Room") {
-            id = "jikan.android.room"
-            implementationClass = "AndroidRoomConventionPlugin"
+        register("AndroidLibrary") {
+            id = "VK_testovoe.android.library"
+            implementationClass = "AndroidLibraryConventionPlugin"
         }
-        */
+        register("AndroidCompose"){
+            id = "VK_testovoe.android.compose"
+            implementationClass = "AndroidComposeConventionPlugin"
+        }
     }
 }
