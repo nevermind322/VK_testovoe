@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.moshi)
     implementation(libs.paging)
     implementation(libs.paging.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     testImplementation(libs.junit)
 
