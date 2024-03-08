@@ -6,10 +6,11 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
-internal const val BASE_URL = "https://jsonformatter.org"
+internal const val BASE_URL = "https://dummyjson.com/"
 
 val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 
@@ -23,7 +24,12 @@ val apiService = retrofit.create(DummyJsonApiService::class.java)
 
 interface DummyJsonApiService {
 
-    @GET("/products")
-    fun getProducts(@Query("limit") limit: Int, @Query("skip") skip: Int): List<Product>
+    @GET("products")
+    suspend fun getProducts(@Query("limit") limit: Int, @Query("skip") skip: Int): ApiResponse
+
+    @GET("products/{id}")
+    suspend fun getProduct(@Path("id") id: Int): Product
 
 }
+
+data class ApiResponse(val products: List<Product>, val total: Int, val skip: Int, val limit: Int)

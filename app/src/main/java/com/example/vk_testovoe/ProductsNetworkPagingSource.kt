@@ -1,6 +1,7 @@
 package com.example.vk_testovoe
 
 import android.media.audiofx.DynamicsProcessing.Limiter
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.vk_testovoe.model.Product
@@ -27,13 +28,14 @@ class ProductsNetworkPagingSource(dummyJsonApiService: DummyJsonApiService = api
         withContext(Dispatchers.IO) {
             val key = params.key ?: LoadKeys(0, params.loadSize)
             try {
-                val data = apiService.getProducts(key.limit, key.skip)
+                val data = apiService.getProducts(key.limit, key.skip).products
                 LoadResult.Page(
                     data = data,
                     prevKey = key.getPrev(),
                     nextKey = key.getNext()
                 )
             } catch (e: Exception) {
+                Log.e("sss", e.message ?: e::class.java.name)
                 LoadResult.Error(e)
             }
         }
