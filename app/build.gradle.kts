@@ -24,6 +24,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.retrofit)
     implementation(libs.moshi)
+    implementation(libs.paging)
+    implementation(libs.paging.compose)
 
     testImplementation(libs.junit)
 
