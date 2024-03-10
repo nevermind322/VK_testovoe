@@ -1,5 +1,8 @@
 package com.example.vk_testovoe.model
 
+import androidx.compose.runtime.Stable
+
+@Stable
 data class Product(
     val id: Int,
     val title: String,

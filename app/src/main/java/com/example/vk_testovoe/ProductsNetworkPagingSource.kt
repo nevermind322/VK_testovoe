@@ -35,7 +35,7 @@ class ProductsNetworkPagingSource(dummyJsonApiService: DummyJsonApiService = api
                     nextKey = if (data.isEmpty()) null else key.getNext()
                 )
             } catch (e: Exception) {
-                Log.e("sss", e.message ?: e::class.java.name)
+                Log.d("paging", e.javaClass.name)
                 LoadResult.Error(e)
             }
         }
