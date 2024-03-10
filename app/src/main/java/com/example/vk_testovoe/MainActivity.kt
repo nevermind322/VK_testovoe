@@ -1,7 +1,5 @@
 package com.example.vk_testovoe
 
-import android.content.Context
-import android.net.ConnectivityManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,6 +14,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.vk_testovoe.ui.screens.DetailScreen
 import com.example.vk_testovoe.ui.screens.ProductListScreen
 import com.example.vk_testovoe.ui.theme.VK_testovoeTheme
 import kotlinx.coroutines.CoroutineScope
@@ -24,7 +27,7 @@ import kotlinx.coroutines.flow.stateIn
 
 class MainActivity : ComponentActivity() {
 
-    lateinit var networkMonitor: NetworkMonitor
+    private lateinit var networkMonitor: NetworkMonitor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,11 +54,29 @@ fun MyApp(
 ) {
 
     val onlineStatus by appState.isOnline.collectAsStateWithLifecycle()
+    val navController = rememberNavController()
 
-    if (onlineStatus)
-        ProductListScreen(onItemClick = {})
-    else
-        Text("Turn on internet")
+    //if (onlineStatus)
+        MainNavHost(navController)
+    //else
+      //  Text("Turn on internet")
+}
+
+const val DETAIL_ROUTE = "detail"
+const val PRODUCT_LIST_ROUTE  = "productList"
+const val DETAIL_PARAMETER = "id"
+
+@Composable
+fun MainNavHost(navController: NavHostController) {
+    NavHost(navController = navController, startDestination = PRODUCT_LIST_ROUTE) {
+
+        composable(PRODUCT_LIST_ROUTE) {
+            ProductListScreen(onItemClick = { id -> navController.navigate("$DETAIL_ROUTE/$id") })
+        }
+        composable("$DETAIL_ROUTE/{$DETAIL_PARAMETER}") {
+            DetailScreen(id = it.arguments!!.getString(DETAIL_PARAMETER)!!.toInt())
+        }
+    }
 }
 
 @Stable

@@ -28,7 +28,7 @@ import com.example.vk_testovoe.model.Product
 import com.example.vk_testovoe.vm.ProductListViewModel
 
 @Composable
-fun ProductListScreen(vm: ProductListViewModel = viewModel(), onItemClick: (Product) -> Unit) {
+fun ProductListScreen(vm: ProductListViewModel = viewModel(), onItemClick: (Int) -> Unit) {
     val pagingItems = vm.pagingDataFlow.collectAsLazyPagingItems()
     when (val loadState = pagingItems.loadState.refresh) {
         is LoadState.Loading -> Box(
@@ -44,7 +44,7 @@ fun ProductListScreen(vm: ProductListViewModel = viewModel(), onItemClick: (Prod
 }
 
 @Composable
-fun ProductList(data: LazyPagingItems<Product>, onItemClick: (Product) -> Unit) {
+fun ProductList(data: LazyPagingItems<Product>, onItemClick: (Int) -> Unit) {
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
         modifier = Modifier.padding(8.dp),
@@ -59,8 +59,8 @@ fun ProductList(data: LazyPagingItems<Product>, onItemClick: (Product) -> Unit) 
 }
 
 @Composable
-fun ProductCard(item: Product, modifier: Modifier = Modifier, onClick: (Product) -> Unit) {
-    Card(modifier = modifier.clickable { onClick(item) }) {
+fun ProductCard(item: Product, modifier: Modifier = Modifier, onClick: (Int) -> Unit) {
+    Card(modifier = modifier.clickable { onClick(item.id) }) {
         AsyncImage(
             model = item.thumbnail,
             contentDescription = "Image of ${item.title}",
