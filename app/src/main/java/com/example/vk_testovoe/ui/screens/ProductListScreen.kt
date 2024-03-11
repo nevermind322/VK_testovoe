@@ -1,21 +1,16 @@
 package com.example.vk_testovoe.ui.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,20 +19,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import coil.compose.AsyncImage
 import com.example.vk_testovoe.model.Product
 import com.example.vk_testovoe.vm.ProductListViewModel
 import kotlinx.coroutines.flow.StateFlow
@@ -73,7 +61,8 @@ fun ProductListScreen(
             if (isOnline) {
                 LaunchedEffect(Unit) {
                     val res = snackbarHostState.showSnackbar(
-                        "Something went wrong", actionLabel = "retry"
+                        "Something went wrong",
+                        actionLabel = "retry"
                     )
                     when (res) {
                         SnackbarResult.ActionPerformed -> pagingItems.retry()
@@ -82,7 +71,6 @@ fun ProductListScreen(
                 }
             }
         }
-
         else -> {
             loaded = true
             ProductList(data = pagingItems, onItemClick = onItemClick)
@@ -107,45 +95,5 @@ fun ProductList(data: LazyPagingItems<Product>, onItemClick: (Int) -> Unit) {
             val product = data[it]
             if (product != null) ProductCard(item = product, onClick = onItemClick)
         }
-    }
-}
-
-@Composable
-fun ProductCard(item: Product, modifier: Modifier = Modifier, onClick: (Int) -> Unit) {
-    Card(modifier = modifier.clickable { onClick(item.id) }) {
-        AsyncImage(
-            model = item.thumbnail,
-            contentDescription = "Image of ${item.title}",
-            contentScale = ContentScale.Fit
-        )
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 4.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "${item.price} $",
-                textDecoration = TextDecoration.LineThrough,
-                fontSize = 14.sp
-            )
-            val priceWithDiscount = (item.price * (100 - item.discountPercentage)/100)
-            val priceString = String.format("%.2f", priceWithDiscount)
-            Text(text = "$priceString $", color = Color.Green, fontSize = 14.sp)
-        }
-        Text(
-            text = item.title,
-            color = Color.Cyan,
-            fontSize = 18.sp,
-            modifier = Modifier.padding(horizontal = 4.dp)
-        )
-        Text(
-            text = item.description,
-            fontSize = 12.sp,
-            overflow = TextOverflow.Ellipsis,
-            lineHeight = 14.sp,
-            modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 4.dp)
-        )
     }
 }
