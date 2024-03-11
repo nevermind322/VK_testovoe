@@ -3,7 +3,9 @@ package com.example.vk_testovoe.ui.screens
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -24,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,8 +59,7 @@ fun ProductListScreen(
                 "Please connect to the Internet", duration = SnackbarDuration.Indefinite
             )
         }
-    }
-    else if (!loaded) {
+    } else if (!loaded) {
         pagingItems.retry()
     }
     when (pagingItems.loadState.refresh) {
@@ -79,6 +82,7 @@ fun ProductListScreen(
                 }
             }
         }
+
         else -> {
             loaded = true
             ProductList(data = pagingItems, onItemClick = onItemClick)
@@ -114,8 +118,24 @@ fun ProductCard(item: Product, modifier: Modifier = Modifier, onClick: (Int) -> 
             contentDescription = "Image of ${item.title}",
             contentScale = ContentScale.Fit
         )
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 4.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "${item.price} $",
+                textDecoration = TextDecoration.LineThrough,
+                fontSize = 14.sp
+            )
+            val priceWithDiscount = (item.price * (100 - item.discountPercentage)/100)
+            val priceString = String.format("%.2f", priceWithDiscount)
+            Text(text = "$priceString $", color = Color.Green, fontSize = 14.sp)
+        }
         Text(
-            item.title,
+            text = item.title,
             color = Color.Cyan,
             fontSize = 18.sp,
             modifier = Modifier.padding(horizontal = 4.dp)
