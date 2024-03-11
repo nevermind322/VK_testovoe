@@ -7,14 +7,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,7 +28,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.vk_testovoe.ui.screens.DetailScreen
 import com.example.vk_testovoe.ui.screens.ProductListScreen
 import com.example.vk_testovoe.ui.theme.VK_testovoeTheme
+import com.example.vk_testovoe.vm.AppUiState
+import com.example.vk_testovoe.vm.CategoriesViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 
@@ -50,9 +59,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyApp(
     networkMonitor: NetworkMonitor,
-    appState: AppState = rememberAppState(networkMonitor = networkMonitor)
+    appState: AppState = rememberAppState(networkMonitor = networkMonitor),
 ) {
-
     val navController = rememberNavController()
     MainNavHost(navController, appState)
 }
@@ -62,8 +70,11 @@ const val PRODUCT_LIST_ROUTE = "productList"
 const val DETAIL_PARAMETER = "id"
 
 @Composable
-fun MainNavHost(navController: NavHostController, appState: AppState) {
+fun MainNavHost(
+    navController: NavHostController, appState: AppState, vm: CategoriesViewModel = viewModel()
+) {
     val snackbarHostState = remember { SnackbarHostState() }
+
     Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) {
         NavHost(
             modifier = Modifier.padding(it),
@@ -85,6 +96,7 @@ fun MainNavHost(navController: NavHostController, appState: AppState) {
     }
 }
 
+
 @Stable
 class AppState(networkMonitor: NetworkMonitor, scope: CoroutineScope) {
     val isOnline = networkMonitor.isOnline.stateIn(
@@ -96,7 +108,8 @@ class AppState(networkMonitor: NetworkMonitor, scope: CoroutineScope) {
 
 @Composable
 fun rememberAppState(
-    networkMonitor: NetworkMonitor, scope: CoroutineScope = rememberCoroutineScope()
+    networkMonitor: NetworkMonitor,
+    scope: CoroutineScope = rememberCoroutineScope(),
 ): AppState {
     return remember(scope, networkMonitor) { AppState(networkMonitor, scope) }
 }

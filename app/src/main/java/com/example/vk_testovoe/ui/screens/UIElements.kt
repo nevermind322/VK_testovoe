@@ -14,19 +14,30 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -115,5 +126,39 @@ fun ProductCard(item: Product, modifier: Modifier = Modifier, onClick: (Int) -> 
             lineHeight = 14.sp,
             modifier = Modifier.padding(start = 4.dp, end = 4.dp, bottom = 4.dp)
         )
+    }
+}
+
+
+@Composable
+fun CategoriesMenu(categories: List<String>, curSelectedCategory : String?, onSelectCategory: (String?) -> Unit) {
+
+    var menuExpanded by remember { mutableStateOf(false) }
+    var selectedCategory by remember { mutableStateOf(curSelectedCategory) }
+
+    Button(onClick = { menuExpanded = !menuExpanded }) {
+        Text(text ="Chooose category")
+        DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
+            for (category in categories) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(end = 4.dp)
+                ) {
+                    RadioButton(selected = if (selectedCategory == null) false else category == selectedCategory,
+                        onClick = {
+                            selectedCategory =
+                                (if (selectedCategory == category) null else category).also(
+                                    onSelectCategory
+                                )
+                        })
+                    Text(text = category, modifier = Modifier.clickable {
+                        selectedCategory =
+                            (if (selectedCategory == category) null else category).also(
+                                onSelectCategory
+                            )
+                    })
+                }
+            }
+        }
     }
 }

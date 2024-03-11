@@ -8,7 +8,12 @@ import androidx.paging.cachedIn
 import com.example.vk_testovoe.ProductsNetworkPagingSource
 
 class ProductListViewModel : ViewModel() {
-    val pagingDataFlow = Pager(PagingConfig(pageSize = 20)) { ProductsNetworkPagingSource() }
-        .flow
-        .cachedIn(viewModelScope)
+
+    var category: String? = null
+
+    val pagingDataFlow =
+        Pager(PagingConfig(pageSize = 20)) { ProductsNetworkPagingSource(category) }
+            .flow
+            .cachedIn(viewModelScope)
+
 }

@@ -14,7 +14,7 @@ data class LoadKeys(val skip: Int, val limit: Int) {
     fun getPrev(): LoadKeys? = if (skip == 0) null else LoadKeys(skip - limit, limit)
 }
 
-class ProductsNetworkPagingSource(dummyJsonApiService: DummyJsonApiService = apiService) :
+class ProductsNetworkPagingSource(private val category: String?) :
     PagingSource<LoadKeys, Product>() {
     override fun getRefreshKey(state: PagingState<LoadKeys, Product>): LoadKeys? {
         val anchor = state.anchorPosition ?: return null
@@ -27,14 +27,18 @@ class ProductsNetworkPagingSource(dummyJsonApiService: DummyJsonApiService = api
         withContext(Dispatchers.IO) {
             val key = params.key ?: LoadKeys(0, 20)
             try {
-                val data = apiService.getProducts(key.limit, key.skip).products
+                val data = if (category == null)
+                    apiService.getProducts(key.limit, key.skip).products
+                else
+                    apiService.getProductsInCategory(category, key.limit, key.skip).products
+
                 LoadResult.Page(
                     data = data,
                     prevKey = key.getPrev(),
                     nextKey = if (data.isEmpty()) null else key.getNext()
                 )
             } catch (e: Exception) {
-                Log.d("paging", e.javaClass.name)
+                Log.d("paging", "${e.javaClass.name}: ${e.message}")
                 LoadResult.Error(e)
             }
         }

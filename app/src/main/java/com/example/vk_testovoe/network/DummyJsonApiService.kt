@@ -30,6 +30,16 @@ interface DummyJsonApiService {
     @GET("products/{id}")
     suspend fun getProduct(@Path("id") id: Int): Product
 
+    @GET("product/categories")
+    suspend fun getCategories(): List<String>
+
+    @GET("products/category/{category}")
+    suspend fun getProductsInCategory(
+        @Path("category") category: String,
+        @Query("limit") limit: Int,
+        @Query("skip") skip: Int
+    ): ApiResponse
+
 }
 
 data class ApiResponse(val products: List<Product>, val total: Int, val skip: Int, val limit: Int)
