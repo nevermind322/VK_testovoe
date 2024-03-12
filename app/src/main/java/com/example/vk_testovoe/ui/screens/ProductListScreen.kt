@@ -91,59 +91,6 @@ fun ProductListScreen(
     val isOnline by isOnlineFlow.collectAsStateWithLifecycle()
     var loaded by remember { mutableStateOf(false) }
     val pagingItems = vm.pagingDataFlow.collectAsLazyPagingItems()
-
-    if (!isOnline) {
-        LaunchedEffect(Unit) {
-            snackbarHostState.showSnackbar(
-                "Please connect to the Internet", duration = SnackbarDuration.Indefinite
-            )
-        }
-    } else if (!loaded) {
-        pagingItems.retry()
-    }
-    when (pagingItems.loadState.refresh) {
-        is LoadState.Loading -> Box(
-            contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
-        ) {
-            CircularProgressIndicator(modifier = Modifier.size(50.dp))
-        }
-
-        is LoadState.Error -> {
-            if (isOnline) {
-                LaunchedEffect(Unit) {
-                    val res = snackbarHostState.showSnackbar(
-                        "Something went wrong", actionLabel = "retry"
-                    )
-                    when (res) {
-                        SnackbarResult.ActionPerformed -> pagingItems.retry()
-                        else -> Unit
-                    }
-                }
-            }
-        }
-
-        else -> {
-            loaded = true
-            ProductList(
-                categories = categories,
-                onItemClick = onItemClick,
-                vm = vm,
-            )
-        }
-    }
-}
-
-@Composable
-fun ProductList(
-    categories: List<String>,
-    onItemClick: (Int) -> Unit,
-    vm: ProductListViewModel = viewModel()
-) {
-    val data = vm.pagingDataFlow.collectAsLazyPagingItems()
-
-    if (data.loadState.prepend is LoadState.Error) data.retry()
-    if (data.loadState.append is LoadState.Error) data.retry()
-
     val selectedCategory by vm.category.collectAsStateWithLifecycle()
 
     Column {
@@ -151,19 +98,69 @@ fun ProductList(
             selectedCategory = selectedCategory,
             onSelectCategory = {
                 vm.updateCategory(it)
-                data.refresh()
+                pagingItems.refresh()
             }
         )
-        LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Fixed(2),
-            modifier = Modifier.padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalItemSpacing = 8.dp
-        ) {
-            items(data.itemCount) {
-                val product = data[it]
-                if (product != null) ProductCard(item = product, onClick = onItemClick)
+        if (!isOnline) {
+            LaunchedEffect(Unit) {
+                snackbarHostState.showSnackbar(
+                    "Please connect to the Internet", duration = SnackbarDuration.Indefinite
+                )
+            }
+        } else if (!loaded) {
+            pagingItems.retry()
+        }
+        when (pagingItems.loadState.refresh) {
+            is LoadState.Loading -> Box(
+                contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
+            ) {
+                CircularProgressIndicator(modifier = Modifier.size(50.dp))
+            }
+
+            is LoadState.Error -> {
+                if (isOnline) {
+                    LaunchedEffect(Unit) {
+                        val res = snackbarHostState.showSnackbar(
+                            "Something went wrong", actionLabel = "retry"
+                        )
+                        when (res) {
+                            SnackbarResult.ActionPerformed -> pagingItems.retry()
+                            else -> Unit
+                        }
+                    }
+                }
+            }
+
+            else -> {
+                loaded = true
+                ProductList(
+                    data = pagingItems,
+                    onItemClick = onItemClick,
+                )
             }
         }
     }
+}
+
+@Composable
+fun ProductList(
+    data: LazyPagingItems<Product>,
+    onItemClick: (Int) -> Unit,
+) {
+
+    if (data.loadState.prepend is LoadState.Error) data.retry()
+    if (data.loadState.append is LoadState.Error) data.retry()
+
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(2),
+        modifier = Modifier.padding(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalItemSpacing = 8.dp
+    ) {
+        items(data.itemCount) {
+            val product = data[it]
+            if (product != null) ProductCard(item = product, onClick = onItemClick)
+        }
+    }
+
 }

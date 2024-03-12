@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.vk_testovoe.model.Product
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -51,9 +52,7 @@ fun PriceWithDiscount(price: Int, discount: Double, modifier: Modifier) {
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = "$price $", textDecoration = TextDecoration.LineThrough, fontSize = 14.sp
-        )
+        Text(text = "$price $", textDecoration = TextDecoration.LineThrough, fontSize = 14.sp)
         val priceWithDiscount = (price * (100 - discount) / 100)
         val priceString = String.format("%.2f", priceWithDiscount)
         Text(text = "$priceString $", color = Color.Green, fontSize = 14.sp)
@@ -88,14 +87,16 @@ fun ProductImagesPager(urlList: List<String>) {
 
         val scope = rememberCoroutineScope()
         Spacer(modifier = Modifier.size(4.dp))
-        if (urlList.size > 1)
-            Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-                for (i in urlList.indices) {
-                    RadioButton(modifier = Modifier.size(30.dp),
-                        selected = i == pagerState.currentPage,
-                        onClick = { scope.launch { pagerState.animateScrollToPage(page = i) } })
-                }
+        if (urlList.size > 1) Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            for (i in urlList.indices) {
+                RadioButton(modifier = Modifier.size(30.dp),
+                    selected = i == pagerState.currentPage,
+                    onClick = { scope.launch { pagerState.animateScrollToPage(page = i) } })
             }
+        }
     }
 }
 
@@ -135,19 +136,28 @@ fun CategoriesMenu(
 ) {
 
     var menuExpanded by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     Button(onClick = { menuExpanded = !menuExpanded }) {
         Text(text = "Chooose category")
         DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
             for (category in categories) {
+                val onClick: () -> Unit = {
+                    onSelectCategory(category)
+                    scope.launch {
+                        delay(200)
+                        menuExpanded = false
+                    }
+                }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(end = 4.dp)
                 ) {
-                    RadioButton(selected = if (selectedCategory == null) false else category == selectedCategory,
-                        onClick = { onSelectCategory(category) })
-                    Text(text = category,
-                        modifier = Modifier.clickable { onSelectCategory(category) })
+                    RadioButton(
+                        selected = if (selectedCategory == null) false else category == selectedCategory,
+                        onClick = onClick
+                    )
+                    Text(text = category, modifier = Modifier.clickable { onClick() })
                 }
             }
         }
