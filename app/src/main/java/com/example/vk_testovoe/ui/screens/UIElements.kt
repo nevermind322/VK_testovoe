@@ -17,12 +17,14 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -143,8 +145,8 @@ fun CategoriesMenu(
     var menuExpanded by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    Button(onClick = { menuExpanded = !menuExpanded }) {
-        Text(text = "Chooose category")
+    IconButton(onClick = { menuExpanded = !menuExpanded }) {
+        Icon(imageVector = Icons.Filled.Menu, contentDescription = "choose category icon")
         DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
             for (category in categories) {
                 val onClick: () -> Unit = {

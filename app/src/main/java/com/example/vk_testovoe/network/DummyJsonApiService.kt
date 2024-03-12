@@ -40,6 +40,13 @@ interface DummyJsonApiService {
         @Query("skip") skip: Int
     ): ApiResponse
 
+    @GET("/products/search")
+    suspend fun searchProducts(
+        @Query("q") q: String,
+        @Query("limit") limit: Int,
+        @Query("skip") skip: Int
+    ): ApiResponse
+
 }
 
 data class ApiResponse(val products: List<Product>, val total: Int, val skip: Int, val limit: Int)

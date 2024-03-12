@@ -6,8 +6,6 @@ import coil.ImageLoaderFactory
 
 class App : Application(), ImageLoaderFactory {
 
-    val networkMonitor = NetworkMonitor(this)
-
     override fun newImageLoader(): ImageLoader = ImageLoader.Builder(this).crossfade(500).build()
 
 }

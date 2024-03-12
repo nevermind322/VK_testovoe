@@ -10,7 +10,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,10 +22,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.vk_testovoe.model.Product
-import com.example.vk_testovoe.vm.AppUiState
-import com.example.vk_testovoe.vm.CategoriesViewModel
 import com.example.vk_testovoe.vm.ProductListViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 
 
@@ -35,63 +31,15 @@ fun ProductListScreen(
     snackbarHostState: SnackbarHostState,
     isOnlineFlow: StateFlow<Boolean>,
     onItemClick: (Int) -> Unit,
-    categoriesVM: CategoriesViewModel = viewModel()
-) {
-    val isOnline by isOnlineFlow.collectAsStateWithLifecycle()
-    val state by categoriesVM.categoriesFlow.collectAsState()
-    LaunchedEffect(Unit) {
-        categoriesVM.loadCategories()
-    }
-
-    when (state) {
-        is AppUiState.Loading -> Unit
-        is AppUiState.Error -> {
-            if (!isOnline) {
-                LaunchedEffect(Unit) {
-                    snackbarHostState.showSnackbar(
-                        "Please connect to the Internet", duration = SnackbarDuration.Indefinite
-                    )
-                }
-            } else {
-                LaunchedEffect(Unit) {
-                    delay(1_000)
-                    categoriesVM.loadCategories()
-                }
-            }
-        }
-
-        is AppUiState.Success -> {
-            ProductListScreen(
-                snackbarHostState = snackbarHostState,
-                isOnlineFlow = isOnlineFlow,
-                categories = (state as AppUiState.Success).categories,
-                onItemClick = onItemClick
-            )
-        }
-    }
-}
-
-@Composable
-fun ProductListScreen(
-    snackbarHostState: SnackbarHostState,
-    isOnlineFlow: StateFlow<Boolean>,
-    onItemClick: (Int) -> Unit,
-    categories: List<String>,
-    vm: ProductListViewModel = viewModel(),
+    pagingItems: LazyPagingItems<Product>
 ) {
     val isOnline by isOnlineFlow.collectAsStateWithLifecycle()
     var loaded by remember { mutableStateOf(false) }
-    val pagingItems = vm.pagingDataFlow.collectAsLazyPagingItems()
-    val selectedCategory by vm.category.collectAsStateWithLifecycle()
+
+
 
     Column {
-        CategoriesMenu(categories = categories,
-            selectedCategory = selectedCategory,
-            onSelectCategory = {
-                vm.updateCategory(it)
-                pagingItems.refresh()
-            }
-        )
+
         if (!isOnline) {
             LaunchedEffect(Unit) {
                 snackbarHostState.showSnackbar(
