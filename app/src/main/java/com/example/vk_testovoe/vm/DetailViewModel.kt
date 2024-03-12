@@ -1,9 +1,9 @@
 package com.example.vk_testovoe.vm
 
 import androidx.lifecycle.ViewModel
-import com.example.vk_testovoe.network.ApiResult
 import com.example.vk_testovoe.ProductsRepository
 import com.example.vk_testovoe.model.Product
+import com.example.vk_testovoe.network.ApiResult
 
 class DetailViewModel(val repo: ProductsRepository = ProductsRepository()) : ViewModel() {
 

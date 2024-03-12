@@ -1,10 +1,8 @@
 package com.example.vk_testovoe
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.vk_testovoe.model.Product
-import com.example.vk_testovoe.network.DummyJsonApiService
 import com.example.vk_testovoe.network.apiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
