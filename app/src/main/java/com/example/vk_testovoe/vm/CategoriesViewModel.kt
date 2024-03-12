@@ -2,8 +2,8 @@ package com.example.vk_testovoe.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.vk_testovoe.repo.CategoryRepo
 import com.example.vk_testovoe.network.ApiResult
+import com.example.vk_testovoe.repo.CategoryRepo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

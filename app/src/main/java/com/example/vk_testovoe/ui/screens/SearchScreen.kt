@@ -12,11 +12,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.vk_testovoe.model.Product
-import com.example.vk_testovoe.vm.SearchScreenViewModel
 import kotlinx.coroutines.flow.StateFlow
-import java.util.concurrent.Flow
 
 @Composable
 fun SearchScreen(
