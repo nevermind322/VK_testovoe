@@ -1,12 +1,15 @@
 package com.example.vk_testovoe.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Star
@@ -24,7 +28,9 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -57,7 +63,7 @@ fun PriceWithDiscount(price: Int, discount: Double, modifier: Modifier) {
         Text(text = "$price $", textDecoration = TextDecoration.LineThrough, fontSize = 14.sp)
         val priceWithDiscount = (price * (100 - discount) / 100)
         val priceString = String.format("%.2f", priceWithDiscount)
-        Text(text = "$priceString $", color = Color.Green, fontSize = 14.sp)
+        Text(text = "$priceString $", color = MaterialTheme.colorScheme.secondary, fontSize = 14.sp)
     }
 }
 
@@ -104,7 +110,10 @@ fun ProductImagesPager(urlList: List<String>) {
 
 @Composable
 fun ProductCard(item: Product, modifier: Modifier = Modifier, onClick: (Int) -> Unit) {
-    Card(modifier = modifier.clickable { onClick(item.id) }) {
+    Card(
+        modifier = modifier.clickable { onClick(item.id) },
+        border = BorderStroke(1.dp, Color.DarkGray)
+    ) {
         AsyncImage(
             model = item.thumbnail,
             contentDescription = "Image of ${item.title}",
@@ -113,11 +122,13 @@ fun ProductCard(item: Product, modifier: Modifier = Modifier, onClick: (Int) -> 
         PriceWithDiscount(
             price = item.price,
             discount = item.discountPercentage,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp)
         )
         Text(
             text = item.title,
-            color = Color.Cyan,
+            color = MaterialTheme.colorScheme.primary,
             fontSize = 18.sp,
             modifier = Modifier.padding(horizontal = 4.dp)
         )
@@ -153,13 +164,17 @@ fun CategoriesMenu(
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(end = 4.dp)
-                ) {
+                    modifier = Modifier
+                        .height(30.dp)
+                        .fillMaxWidth()
+                        .padding(end = 4.dp)
+                        .clickable { onClick() })
+                {
                     RadioButton(
                         selected = if (selectedCategory == null) false else category == selectedCategory,
-                        onClick = onClick
+                        onClick = null
                     )
-                    Text(text = category, modifier = Modifier.clickable { onClick() })
+                    Text(text = category)
                 }
             }
         }
@@ -168,7 +183,7 @@ fun CategoriesMenu(
 
 @Composable
 fun CenteredCircularProgressIndicator() {
-    Box(modifier = Modifier.size(50.dp), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator(modifier = Modifier.size(50.dp))
     }
 }
