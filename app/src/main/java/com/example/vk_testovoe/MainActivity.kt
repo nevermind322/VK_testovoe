@@ -176,7 +176,11 @@ fun MainNavHost(
                         )
                     }
                     composable("$DETAIL_ROUTE/{$DETAIL_PARAMETER}") {
-                        DetailScreen(id = it.arguments!!.getString(DETAIL_PARAMETER)!!.toInt())
+                        DetailScreen(
+                            id = it.arguments!!.getString(DETAIL_PARAMETER)!!.toInt(),
+                            snackbarHostState = snackbarHostState,
+                            isOnlineFlow = appState.isOnline
+                        )
                     }
                 }
             }
