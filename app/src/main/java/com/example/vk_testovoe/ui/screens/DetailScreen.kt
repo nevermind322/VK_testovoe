@@ -46,9 +46,7 @@ fun DetailScreen(id: Int, vm: DetailViewModel = viewModel()) {
     }
     when (state) {
         DetailScreenState.Loading -> {
-            Box(modifier = Modifier.size(50.dp), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
+            CenteredCircularProgressIndicator()
         }
 
         is DetailScreenState.Success -> {
