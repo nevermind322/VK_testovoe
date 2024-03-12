@@ -52,9 +52,7 @@ fun PriceWithDiscount(price: Int, discount: Double, modifier: Modifier) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "$price $",
-            textDecoration = TextDecoration.LineThrough,
-            fontSize = 14.sp
+            text = "$price $", textDecoration = TextDecoration.LineThrough, fontSize = 14.sp
         )
         val priceWithDiscount = (price * (100 - discount) / 100)
         val priceString = String.format("%.2f", priceWithDiscount)
@@ -131,13 +129,14 @@ fun ProductCard(item: Product, modifier: Modifier = Modifier, onClick: (Int) -> 
 
 
 @Composable
-fun CategoriesMenu(categories: List<String>, curSelectedCategory : String?, onSelectCategory: (String?) -> Unit) {
+fun CategoriesMenu(
+    categories: List<String>, selectedCategory: String?, onSelectCategory: (String) -> Unit
+) {
 
     var menuExpanded by remember { mutableStateOf(false) }
-    var selectedCategory by remember { mutableStateOf(curSelectedCategory) }
 
     Button(onClick = { menuExpanded = !menuExpanded }) {
-        Text(text ="Chooose category")
+        Text(text = "Chooose category")
         DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
             for (category in categories) {
                 Row(
@@ -145,18 +144,9 @@ fun CategoriesMenu(categories: List<String>, curSelectedCategory : String?, onSe
                     modifier = Modifier.padding(end = 4.dp)
                 ) {
                     RadioButton(selected = if (selectedCategory == null) false else category == selectedCategory,
-                        onClick = {
-                            selectedCategory =
-                                (if (selectedCategory == category) null else category).also(
-                                    onSelectCategory
-                                )
-                        })
-                    Text(text = category, modifier = Modifier.clickable {
-                        selectedCategory =
-                            (if (selectedCategory == category) null else category).also(
-                                onSelectCategory
-                            )
-                    })
+                        onClick = { onSelectCategory(category) })
+                    Text(text = category,
+                        modifier = Modifier.clickable { onSelectCategory(category) })
                 }
             }
         }

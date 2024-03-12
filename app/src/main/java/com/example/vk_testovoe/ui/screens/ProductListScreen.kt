@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -111,8 +112,7 @@ fun ProductListScreen(
             if (isOnline) {
                 LaunchedEffect(Unit) {
                     val res = snackbarHostState.showSnackbar(
-                        "Something went wrong",
-                        actionLabel = "retry"
+                        "Something went wrong", actionLabel = "retry"
                     )
                     when (res) {
                         SnackbarResult.ActionPerformed -> pagingItems.retry()
@@ -124,37 +124,46 @@ fun ProductListScreen(
 
         else -> {
             loaded = true
-            Column {
-                CategoriesMenu(
-                    categories = categories,
-                    curSelectedCategory = vm.category,
-                    onSelectCategory = {
-                        vm.category = it
-                        pagingItems.refresh()
-                    })
-                ProductList(data = pagingItems, onItemClick = onItemClick)
-            }
+            ProductList(
+                categories = categories,
+                onItemClick = onItemClick,
+                vm = vm,
+            )
         }
     }
 }
 
 @Composable
+fun ProductList(
+    categories: List<String>,
+    onItemClick: (Int) -> Unit,
+    vm: ProductListViewModel = viewModel()
+) {
+    val data = vm.pagingDataFlow.collectAsLazyPagingItems()
 
-fun ProductList(data: LazyPagingItems<Product>, onItemClick: (Int) -> Unit) {
-    if (data.loadState.prepend is LoadState.Error)
-        data.retry()
-    if (data.loadState.append is LoadState.Error)
-        data.retry()
+    if (data.loadState.prepend is LoadState.Error) data.retry()
+    if (data.loadState.append is LoadState.Error) data.retry()
 
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(2),
-        modifier = Modifier.padding(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalItemSpacing = 8.dp
-    ) {
-        items(data.itemCount) {
-            val product = data[it]
-            if (product != null) ProductCard(item = product, onClick = onItemClick)
+    val selectedCategory by vm.category.collectAsStateWithLifecycle()
+
+    Column {
+        CategoriesMenu(categories = categories,
+            selectedCategory = selectedCategory,
+            onSelectCategory = {
+                vm.updateCategory(it)
+                data.refresh()
+            }
+        )
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(2),
+            modifier = Modifier.padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalItemSpacing = 8.dp
+        ) {
+            items(data.itemCount) {
+                val product = data[it]
+                if (product != null) ProductCard(item = product, onClick = onItemClick)
+            }
         }
     }
 }
