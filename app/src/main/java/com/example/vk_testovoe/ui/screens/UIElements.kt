@@ -88,13 +88,14 @@ fun ProductImagesPager(urlList: List<String>) {
 
         val scope = rememberCoroutineScope()
         Spacer(modifier = Modifier.size(4.dp))
-        Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-            for (i in urlList.indices) {
-                RadioButton(modifier = Modifier.size(30.dp),
-                    selected = i == pagerState.currentPage,
-                    onClick = { scope.launch { pagerState.animateScrollToPage(page = i) } })
+        if (urlList.size > 1)
+            Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                for (i in urlList.indices) {
+                    RadioButton(modifier = Modifier.size(30.dp),
+                        selected = i == pagerState.currentPage,
+                        onClick = { scope.launch { pagerState.animateScrollToPage(page = i) } })
+                }
             }
-        }
     }
 }
 
