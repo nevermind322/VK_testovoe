@@ -1,7 +1,9 @@
 package com.example.vk_testovoe.vm
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.vk_testovoe.model.Category
 import com.example.vk_testovoe.network.ApiResult
 import com.example.vk_testovoe.repo.CategoryRepo
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +19,7 @@ class CategoriesViewModel : ViewModel() {
         viewModelScope.launch {
             when (val res = CategoryRepo.getCategories()) {
                 is ApiResult.Success -> _categoriesFlow.value = AppUiState.Success(res.data)
-                is ApiResult.Error -> _categoriesFlow.value = AppUiState.Error(res.msg)
+                is ApiResult.Error -> _categoriesFlow.value = AppUiState.Error(res.msg).also {Log.d("category", "error ${res.msg}") }
             }
         }
     }
@@ -25,7 +27,7 @@ class CategoriesViewModel : ViewModel() {
 
 sealed class AppUiState {
     data object Loading : AppUiState()
-    data class Success(val categories: List<String>) : AppUiState()
+    data class Success(val categories: List<Category>) : AppUiState()
     data class Error(val msg: String) : AppUiState()
 
 }

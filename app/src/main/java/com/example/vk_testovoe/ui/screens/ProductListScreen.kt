@@ -1,5 +1,6 @@
 package com.example.vk_testovoe.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -8,6 +9,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,7 +38,7 @@ fun ProductListScreen(
 
 
     Column {
-
+        Text("list")
         if (!isOnline) {
             LaunchedEffect(Unit) {
                 snackbarHostState.showSnackbar(
@@ -46,13 +48,14 @@ fun ProductListScreen(
         } else if (!loaded) {
             pagingItems.retry()
         }
-        when (pagingItems.loadState.refresh) {
+        when (val s = pagingItems.loadState.refresh) {
             is LoadState.Loading -> {
                 CenteredCircularProgressIndicator()
             }
 
             is LoadState.Error -> {
                 if (isOnline) {
+                    Log.d("error", s.error.message.toString())
                     LaunchedEffect(Unit) {
                         val res = snackbarHostState.showSnackbar(
                             "Something went wrong", actionLabel = "retry"

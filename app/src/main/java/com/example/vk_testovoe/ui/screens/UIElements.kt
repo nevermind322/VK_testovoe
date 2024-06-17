@@ -42,12 +42,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.vk_testovoe.model.Category
 import com.example.vk_testovoe.model.Product
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun PriceWithDiscount(price: Int, discount: Double, modifier: Modifier) {
+fun PriceWithDiscount(price: Double, discount: Double, modifier: Modifier) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -138,7 +139,7 @@ fun ProductCard(item: Product, modifier: Modifier = Modifier, onClick: (Int) -> 
 
 @Composable
 fun CategoriesMenu(
-    categories: List<String>, selectedCategory: String?, onSelectCategory: (String) -> Unit
+    categories: List<Category>, selectedCategory: String?, onSelectCategory: (Category) -> Unit
 ) {
 
     var menuExpanded by remember { mutableStateOf(false) }
@@ -164,10 +165,10 @@ fun CategoriesMenu(
                         .clickable { onClick() })
                 {
                     RadioButton(
-                        selected = if (selectedCategory == null) false else category == selectedCategory,
+                        selected = if (selectedCategory == null) false else category.name == selectedCategory,
                         onClick = null
                     )
-                    Text(text = category)
+                    Text(text = category.name)
                 }
             }
         }

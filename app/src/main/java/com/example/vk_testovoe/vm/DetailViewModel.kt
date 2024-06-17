@@ -1,5 +1,6 @@
 package com.example.vk_testovoe.vm
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.vk_testovoe.model.Product
 import com.example.vk_testovoe.network.ApiResult
@@ -10,6 +11,7 @@ class DetailViewModel(val repo: ProductsRepository = ProductsRepository()) : Vie
     suspend fun getProduct(id: Int) = when (val res = repo.getProduct(id)) {
         is ApiResult.Success -> DetailScreenState.Success(res.data)
         is ApiResult.Error -> DetailScreenState.Error(res.msg)
+            .also { Log.d("products", "error: ${res.msg}") }
     }
 
 }
