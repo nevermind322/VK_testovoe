@@ -118,7 +118,6 @@ fun MainNavHost(
     LaunchedEffect(Unit) {
         vm.loadCategories()
     }
-Text("hello")
     when (state) {
         is AppUiState.Loading -> CenteredCircularProgressIndicator()
         is AppUiState.Error -> {
@@ -138,7 +137,6 @@ Text("hello")
 
         is AppUiState.Success -> {
             val categories = (state as AppUiState.Success).categories
-            Text("s")
             Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }, topBar = {
                 AppBar(onSearchClick = {
                     searchVm.q = ""

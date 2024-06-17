@@ -38,7 +38,6 @@ fun ProductListScreen(
 
 
     Column {
-        Text("list")
         if (!isOnline) {
             LaunchedEffect(Unit) {
                 snackbarHostState.showSnackbar(
